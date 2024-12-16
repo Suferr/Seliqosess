@@ -1,0 +1,1763 @@
+﻿<html><head><base href="." /><meta charset="UTF-8"><meta content="width=device-width, initial-scale=1" name="viewport"><style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #008080;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    z-index: 9999;
+}
+
+.loading-logo {
+    margin-bottom: 20px;
+}
+
+.loading-bar-container {
+    width: 300px;
+    height: 20px;
+    background: #333;
+    border: 2px solid #444;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.loading-bar {
+    width: 0%;
+    height: 100%;
+    background: #008080;
+    transition: width 3s ease-in-out;
+}
+
+.loading-text {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.desktop {
+    height: 100vh;
+    position: relative;
+    display: none;
+}
+
+.taskbar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    background: #c0c0c0;
+    border-top: 2px solid #ffffff;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    box-shadow: inset -1px -1px #0a0a0a,inset 1px 1px #dfdfdf;
+}
+
+.start-button {
+    padding: 5px 15px;
+    margin-right: 10px;
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+.start-button:active {
+    border-style: inset;
+}
+
+.start-menu {
+    position: fixed;
+    bottom: 40px; /* Height of taskbar */
+    left: 0;
+    width: 250px; /* Increased width to accommodate header */
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    display: none;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    z-index: 9999;
+}
+
+.start-menu-header {
+    background: #236b8e;
+    color: white;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #1a4f69;
+}
+
+.start-menu-avatar {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.start-menu-username {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.start-menu-item {
+    padding: 8px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #808080;
+}
+
+.start-menu-item:hover {
+    background: #000080;
+    color: white;
+}
+
+.window {
+    position: absolute;
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    min-width: 200px;
+    min-height: 150px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    resize: both;
+    overflow: auto;
+}
+
+.title-bar {
+    background: #000080;
+    color: white;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+}
+
+.window-buttons {
+    display: flex;
+    gap: 2px;
+}
+
+.close-btn, .minimize-btn {
+    background: #c0c0c0;
+    border: 1px outset #ffffff;
+    padding: 2px 5px;
+    cursor: pointer;
+}
+
+.window-content {
+    padding: 10px;
+    max-height: 80vh;
+    overflow: auto;
+}
+
+.desktop-icon {
+    width: 70px;
+    text-align: center;
+    color: white;
+    margin: 10px;
+    cursor: pointer;
+}
+
+.icon-grid {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
+.clock {
+    margin-left: auto;
+    padding: 5px 10px;
+    background: #c0c0c0;
+    border: 2px inset #ffffff;
+}
+
+.minimized {
+    display: none;
+}
+
+#taskbar-items {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+
+.taskbar-item {
+    padding: 3px 10px;
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    margin-right: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    min-width: 100px;
+    max-width: 200px;
+}
+
+.taskbar-item.active {
+    border-style: inset;
+}
+
+.settings-group {
+    margin-bottom: 15px;
+}
+
+.settings-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.settings-group button {
+    padding: 5px 10px;
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    cursor: pointer;
+}
+
+.settings-group button:active {
+    border-style: inset;
+}
+
+.image-picker {
+    margin: 5px 0;
+    width: 100%;
+    max-width: 300px;
+}
+
+.profile-picker {
+    width: 100%;
+    max-width: 300px;
+    margin: 5px 0;
+}
+
+.color-picker {
+    margin-bottom: 10px;
+}
+
+#usernameInput {
+    width: 100%;
+    max-width: 300px;
+    padding: 5px;
+    margin: 5px 0;
+}
+
+.calculator-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    padding: 10px;
+}
+
+.calculator-screen {
+    grid-column: span 4;
+    background: #fff;
+    border: 2px inset #ffffff;
+    padding: 10px;
+    text-align: right;
+    margin-bottom: 10px;
+    font-family: monospace;
+    font-size: 20px;
+}
+
+.calculator-button {
+    padding: 10px;
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.calculator-button:active {
+    border-style: inset;
+}
+
+.calculator-button.span-2 {
+    grid-column: span 2;
+}
+
+.browser-toolbar {
+    display: flex;
+    gap: 5px;
+    padding: 5px;
+    background: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+}
+
+.browser-toolbar input {
+    flex: 1;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.browser-toolbar button {
+    padding: 5px 10px;
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    cursor: pointer;
+}
+
+.browser-toolbar button:active {
+    border-style: inset;
+}
+
+.browser-content {
+    width: 100%;
+    height: 400px;
+    border: none;
+}
+
+/* Add Paint-specific styles */
+.paint-toolbar {
+    display: flex;
+    gap: 5px;
+    padding: 5px;
+    background: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+}
+
+.paint-tools {
+    display: flex;
+    gap: 5px;
+}
+
+.paint-tool {
+    padding: 5px;
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    cursor: pointer;
+    min-width: 30px;
+    text-align: center;
+}
+
+.paint-tool.active {
+    border-style: inset;
+    background: #a0a0a0;
+}
+
+.paint-colors {
+    display: flex;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.color-picker-paint {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+}
+
+.size-selector {
+    width: 60px;
+}
+
+.paint-canvas {
+    background: #ffffff;
+    cursor: crosshair;
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+.text-editor-toolbar {
+    padding: 5px;
+    background: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.text-editor-toolbar button {
+    padding: 5px 10px;
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.text-editor-toolbar button:active {
+    border-style: inset;
+}
+
+.text-editor-toolbar select {
+    padding: 3px;
+    border: 1px solid #999;
+}
+
+.text-editor-content {
+    padding: 10px;
+    background: white;
+    border: 1px solid #ccc;
+    min-height: 300px;
+    margin: 5px;
+}
+
+[contenteditable="true"] {
+    outline: none;
+}
+
+.error-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    padding: 10px;
+    width: 300px;
+    z-index: 10000;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+}
+
+.error-title {
+    background: #000080;
+    color: white;
+    padding: 5px;
+    margin: -10px -10px 10px -10px;
+}
+
+.error-content {
+    padding: 20px 10px;
+    text-align: center;
+}
+
+.error-button {
+    display: block;
+    margin: 10px auto;
+    padding: 5px 20px;
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    cursor: pointer;
+}
+
+.error-button:active {
+    border-style: inset;
+}
+
+/* Clock specific styles */
+.clock-app {
+    padding: 20px;
+    min-width: 300px;
+}
+
+.clock-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.clock-tab {
+    padding: 8px 16px;
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    cursor: pointer;
+}
+
+.clock-tab.active {
+    border-style: inset;
+    background: #a0a0a0;
+}
+
+.time-display {
+    font-size: 48px;
+    font-family: monospace;
+    text-align: center;
+    margin: 20px 0;
+    padding: 10px;
+    background: #000;
+    color: #00ff00;
+    border: 2px inset #ffffff;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.controls button {
+    padding: 8px 16px;
+    background: #c0c0c0;
+    border: 2px outset #ffffff;
+    cursor: pointer;
+}
+
+.controls button:active {
+    border-style: inset;
+}
+
+.time-input {
+    width: 60px;
+    padding: 5px;
+    text-align: center;
+}
+
+.lap-times {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.countdown-input {
+    padding: 5px;
+    margin-right: 10px;
+}
+
+.minesweeper-container {
+    padding: 10px;
+    background: #c0c0c0;
+    user-select: none;
+}
+
+.minesweeper-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    background: #c0c0c0;
+    border: 2px solid #808080;
+    margin-bottom: 10px;
+}
+
+.mine-counter, .timer {
+    background: #000;
+    color: #ff0000;
+    padding: 3px 6px;
+    font-family: monospace;
+    font-size: 20px;
+}
+
+.restart-button {
+    width: 26px;
+    height: 26px;
+    background: #c0c0c0;
+    border: 2px outset #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.minesweeper-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 30px);
+    gap: 1px;
+    background: #808080;
+    border: 3px solid #808080;
+}
+
+.mine-cell {
+    width: 30px;
+    height: 30px;
+    background: #c0c0c0;
+    border: 2px outset #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.mine-cell.revealed {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #808080;
+}
+
+.mine-cell.flagged {
+    color: #ff0000;
+}
+</style></head><body>
+<div class="loading-screen" id="loadingScreen">
+    <div class="loading-logo">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#008080" stroke-width="5"/>
+            <text x="50" y="55" text-anchor="middle" fill="#008080" font-size="14">Seliq Bob</text>
+        </svg>
+    </div>
+    <div class="loading-bar-container">
+        <div class="loading-bar" id="loadingBar"></div>
+    </div>
+    <div class="loading-text">Loading Seliq Bob 1.0...</div>
+</div>
+
+<div class="desktop">
+    <div class="icon-grid">
+        <div class="desktop-icon" ondblclick="createWindow('Notepad')">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+                <rect x="6" y="4" width="20" height="24" fill="#ffffff" stroke="#000"/>
+                <line x1="10" y1="8" x2="22" y2="8" stroke="#000"/>
+                <line x1="10" y1="12" x2="22" y2="12" stroke="#000"/>
+                <line x1="10" y1="16" x2="22" y2="16" stroke="#000"/>
+            </svg>
+            <div>Notepad</div>
+        </div>
+        <div class="desktop-icon" ondblclick="createWindow('Settings')">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+                <circle cx="16" cy="16" r="12" fill="#ffffff" stroke="#000"/>
+                <path d="M16 8 L16 24 M8 16 L24 16" stroke="#000" stroke-width="2"/>
+            </svg>
+            <div>Settings</div>
+        </div>
+        <div class="desktop-icon" ondblclick="createWindow('Calculator')">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+                <rect x="4" y="2" width="24" height="28" fill="#f0f0f0" stroke="#000"/>
+                <rect x="6" y="4" width="20" height="6" fill="#fff" stroke="#000"/>
+                <rect x="7" y="12" width="4" height="4" fill="#d0d0d0" stroke="#808080"/>
+                <rect x="14" y="12" width="4" height="4" fill="#d0d0d0" stroke="#808080"/>
+                <rect x="21" y="12" width="4" height="4" fill="#d0d0d0" stroke="#808080"/>
+                <rect x="7" y="18" width="4" height="4" fill="#d0d0d0" stroke="#808080"/>
+                <rect x="14" y="18" width="4" height="4" fill="#d0d0d0" stroke="#808080"/>
+                <rect x="21" y="18" width="4" height="4" fill="#d0d0d0" stroke="#808080"/>
+                <rect x="7" y="24" width="4" height="4" fill="#d0d0d0" stroke="#808080"/>
+                <rect x="14" y="24" width="4" height="4" fill="#d0d0d0" stroke="#808080"/>
+                <rect x="21" y="24" width="4" height="4" fill="#d0d0d0" stroke="#808080"/>
+            </svg>
+            <div>Calculator</div>
+        </div>
+        <div class="desktop-icon" ondblclick="createWindow('SBrow')">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+                <circle cx="16" cy="16" r="14" fill="#4285f4" stroke="#2965d6"/>
+                <circle cx="16" cy="16" r="6" fill="white"/>
+                <path d="M16 10 A6 6 0 0 1 22 16" stroke="#ea4335" stroke-width="2"/>
+                <path d="M16 22 A6 6 0 0 1 10 16" stroke="#34a853" stroke-width="2"/>
+                <path d="M10 16 A6 6 0 0 1 16 10" stroke="#fbbc05" stroke-width="2"/>
+                <path d="M22 16 A6 6 0 0 1 16 22" stroke="#4285f4" stroke-width="2"/>
+            </svg>
+            <div>SBrow</div>
+        </div>
+        <div class="desktop-icon" ondblclick="createWindow('Paint')">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+                <rect x="4" y="4" width="24" height="24" fill="#ffffff" stroke="#000"/>
+                <path d="M8 20 L12 16 L18 22 L24 12" stroke="#ff0000" stroke-width="2"/>
+                <circle cx="20" cy="8" r="3" fill="#0000ff"/>
+                <rect x="6" y="22" width="12" height="4" fill="#008000"/>
+            </svg>
+            <div>Paint</div>
+        </div>
+        <div class="desktop-icon" ondblclick="createWindow('TXTEDT')">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+                <rect x="4" y="4" width="24" height="24" fill="#ffffff" stroke="#000"/>
+                <line x1="8" y1="8" x2="24" y2="8" stroke="#000" stroke-width="2"/>
+                <line x1="8" y1="13" x2="20" y2="13" stroke="#000"/>
+                <line x1="8" y1="18" x2="24" y2="18" stroke="#000"/>
+                <line x1="8" y1="23" x2="16" y2="23" stroke="#000"/>
+            </svg>
+            <div>TXTEDT</div>
+        </div>
+        <div class="desktop-icon" ondblclick="createWindow('Clock')">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+                <circle cx="16" cy="16" r="14" fill="#ffffff" stroke="#000"/>
+                <line x1="16" y1="16" x2="16" y2="8" stroke="#000" stroke-width="2"/>
+                <line x1="16" y1="16" x2="22" y2="16" stroke="#000" stroke-width="2"/>
+                <circle cx="16" cy="16" r="2" fill="#000"/>
+            </svg>
+            <div>Clock</div>
+        </div>
+        <div class="desktop-icon" ondblclick="createWindow('Minesweeper')">
+            <svg width="32" height="32" viewBox="0 0 32 32">
+                <rect x="4" y="4" width="24" height="24" fill="#c0c0c0" stroke="#808080"/>
+                <rect x="6" y="6" width="4" height="4" fill="#0000ff"/>
+                <rect x="14" y="6" width="4" height="4" fill="#ff0000"/>
+                <rect x="22" y="6" width="4" height="4" fill="#008000"/>
+                <rect x="6" y="14" width="4" height="4" fill="#000080"/>
+                <rect x="14" y="14" width="4" height="4" fill="#800000"/>
+                <rect x="22" y="14" width="4" height="4" fill="#808000"/>
+            </svg>
+            <div>Minesweeper</div>
+        </div>
+    </div>
+    <div class="taskbar">
+        <div class="start-button" onclick="toggleStartMenu()">Start</div>
+        <div id="startMenu" class="start-menu">
+            <div class="start-menu-header">
+                <svg class="start-menu-avatar" viewBox="0 0 40 40">
+                    <circle cx="20" cy="15" r="8" fill="#236b8e"/>
+                    <circle cx="20" cy="42" r="16" fill="#236b8e"/>
+                </svg>
+                <div class="start-menu-username">User</div>
+            </div>
+            <div class="start-menu-item" onclick="createWindow('Settings')">Settings</div>
+            <div class="start-menu-item" onclick="shutDown()">Shut Down...</div>
+        </div>
+        <div id="taskbar-items"></div>
+        <div class="clock" id="clock"></div>
+    </div>
+</div>
+
+<script>
+function showError(message) {
+    // Create error window
+    const errorWindow = document.createElement('div');
+    errorWindow.className = 'error-window';
+    errorWindow.innerHTML = `
+        <div class="error-title">Error!</div>
+        <div class="error-content">
+            ${message || 'This is still in W.I.P!!!!! so coming soon....'}
+        </div>
+        <button class="error-button" onclick="this.parentElement.remove()">OK</button>
+    `;
+    document.body.appendChild(errorWindow);
+
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+        if (errorWindow.parentElement) {
+            errorWindow.remove();
+        }
+    }, 3000);
+}
+
+let zIndex = 1000;
+let windows = [];
+let windowCount = 0;
+
+function updateClock() {
+    const clock = document.getElementById('clock');
+    const now = new Date();
+    clock.textContent = now.toLocaleTimeString();
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+function applySettings(setting, value) {
+    switch(setting) {
+        case 'background':
+            document.body.style.background = value;
+            // Remove any background image when changing color
+            document.body.style.backgroundImage = 'none';
+            localStorage.removeItem('backgroundImage');
+            const bgInputs = document.querySelectorAll('.color-picker[data-setting="background"]');
+            bgInputs.forEach(input => input.value = value);
+            break;
+        case 'taskbar':
+            document.querySelector('.taskbar').style.background = value;
+            const taskbarInputs = document.querySelectorAll('.color-picker[data-setting="taskbar"]');
+            taskbarInputs.forEach(input => input.value = value);
+            break;
+    }
+    localStorage.setItem(setting, value);
+}
+
+function loadSavedSettings() {
+    const savedBackground = localStorage.getItem('background');
+    const savedTaskbar = localStorage.getItem('taskbar');
+    const savedBackgroundImage = localStorage.getItem('backgroundImage');
+    
+    if (savedBackgroundImage) {
+        document.body.style.backgroundImage = `url('${savedBackgroundImage}')`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundRepeat = 'no-repeat';
+    } else if (savedBackground) {
+        document.body.style.background = savedBackground;
+    }
+    
+    if (savedTaskbar) {
+        document.querySelector('.taskbar').style.background = savedTaskbar;
+    }
+}
+
+function handleBackgroundImage(input) {
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.body.style.backgroundImage = `url('${e.target.result}')`;
+            document.body.style.backgroundSize = 'cover';
+            document.body.style.backgroundPosition = 'center';
+            document.body.style.backgroundRepeat = 'no-repeat';
+            localStorage.setItem('backgroundImage', e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function removeBackgroundImage() {
+    document.body.style.backgroundImage = 'none';
+    localStorage.removeItem('backgroundImage');
+    // Restore the background color
+    const savedBackground = localStorage.getItem('background');
+    if (savedBackground) {
+        document.body.style.background = savedBackground;
+    } else {
+        document.body.style.background = '#008080';
+    }
+}
+
+function createWindow(title) {
+    const windowId = 'window-' + windowCount++;
+    const window = document.createElement('div');
+    window.className = 'window';
+    window.id = windowId;
+    window.style.left = Math.random() * (window.innerWidth - 300) + 'px';
+    window.style.top = Math.random() * (window.innerHeight - 200) + 'px';
+    window.style.zIndex = zIndex++;
+
+    window.innerHTML = `
+        <div class="title-bar">
+            <div>${title}</div>
+            <div class="window-buttons">
+                <button class="minimize-btn" onclick="minimizeWindow('${windowId}')">_</button>
+                <button class="close-btn" onclick="closeWindow('${windowId}')">×</button>
+            </div>
+        </div>
+        <div class="window-content">
+            ${getWindowContent(title)}
+        </div>
+    `;
+
+    document.querySelector('.desktop').appendChild(window);
+    windows.push({
+        id: windowId,
+        title: title,
+        element: window
+    });
+    createTaskbarItem(windowId, title);
+    makeDraggable(window);
+
+    // Add Minesweeper functionality
+    if (title === 'Minesweeper') {
+        initializeMinesweeper(window);
+    }
+}
+
+function getWindowContent(title) {
+    switch(title) {
+        case 'Notepad':
+            return `<textarea style="width: 100%; height: 200px; resize: none;"></textarea>`;
+        case 'Settings':
+            const background = document.body.style.background || '#008080';
+            const taskbar = document.querySelector('.taskbar').style.background || '#c0c0c0';
+            return `
+                <div class="settings-group">
+                    <label>Background Color:</label>
+                    <input type="color" class="color-picker" data-setting="background" 
+                           value="${background}"
+                           onchange="applySettings('background', this.value)">
+                </div>
+                <div class="settings-group">
+                    <label>Background Image:</label>
+                    <input type="file" accept="image/*" class="image-picker" 
+                           onchange="handleBackgroundImage(this)">
+                    <button onclick="removeBackgroundImage()" style="margin-top: 5px;">Remove Background Image</button>
+                </div>
+                <div class="settings-group">
+                    <label>Taskbar Color:</label>
+                    <input type="color" class="color-picker" data-setting="taskbar"
+                           value="${taskbar}"
+                           onchange="applySettings('taskbar', this.value)">
+                </div>
+                <div class="settings-group">
+                    <label>Change Username:</label>
+                    <input type="text" id="usernameInput" placeholder="Enter new username" value="${localStorage.getItem('username') || 'User'}"
+                           onchange="changeUsername(this.value)">
+                </div>
+                <div class="settings-group">
+                    <label>Change Profile Picture:</label>
+                    <input type="file" accept=".png,.jpg,.jpeg,.webp" class="profile-picker" 
+                           onchange="changeProfilePicture(this)">
+                </div>
+            `;
+        case 'Calculator':
+            return `
+                <div class="calculator-grid">
+                    <div class="calculator-screen" id="calc-screen">0</div>
+                    <button class="calculator-button" onclick="calculatorClear()">C</button>
+                    <button class="calculator-button" onclick="calculatorDelete()">←</button>
+                    <button class="calculator-button" onclick="calculatorOperation('/')">/</button>
+                    <button class="calculator-button" onclick="calculatorOperation('*')">×</button>
+                    <button class="calculator-button" onclick="calculatorInput('7')">7</button>
+                    <button class="calculator-button" onclick="calculatorInput('8')">8</button>
+                    <button class="calculator-button" onclick="calculatorInput('9')">9</button>
+                    <button class="calculator-button" onclick="calculatorOperation('-')">-</button>
+                    <button class="calculator-button" onclick="calculatorInput('4')">4</button>
+                    <button class="calculator-button" onclick="calculatorInput('5')">5</button>
+                    <button class="calculator-button" onclick="calculatorInput('6')">6</button>
+                    <button class="calculator-button" onclick="calculatorOperation('+')">+</button>
+                    <button class="calculator-button" onclick="calculatorInput('1')">1</button>
+                    <button class="calculator-button" onclick="calculatorInput('2')">2</button>
+                    <button class="calculator-button" onclick="calculatorInput('3')">3</button>
+                    <button class="calculator-button span-2" onclick="calculatorCalculate()">=</button>
+                    <button class="calculator-button span-2" onclick="calculatorInput('0')">0</button>
+                    <button class="calculator-button" onclick="calculatorInput('.');">.</button>
+                </div>
+            `;
+        case 'SBrow':
+            return `
+                <div class="browser-toolbar">
+                    <button onclick="browserBack(this)">←</button>
+                    <button onclick="browserForward(this)">→</button>
+                    <button onclick="browserRefresh(this)">↻</button>
+                    <input type="text" class="url-bar" placeholder="Enter URL" onkeydown="if(event.key === 'Enter') browserNavigate(this)">
+                    <button onclick="browserGo(this)">Go</button>
+                </div>
+                <iframe class="browser-content" src="https://jelly-stone-hardboard.glitch.me"></iframe>
+            `;
+        case 'Paint':
+            return `
+                <div class="paint-toolbar">
+                    <div class="paint-tools">
+                        <button class="paint-tool active" data-tool="brush">🖌️</button>
+                        <button class="paint-tool" data-tool="eraser">⌫</button>
+                        <button class="paint-tool" data-tool="line">📏</button>
+                        <button class="paint-tool" data-tool="rectangle">□</button>
+                        <button class="paint-tool" data-tool="circle">○</button>
+                        <input type="number" class="size-selector" value="5" min="1" max="50" title="Brush Size">
+                    </div>
+                    <div class="paint-colors">
+                        <input type="color" class="color-picker-paint" value="#000000">
+                    </div>
+                    <button class="paint-tool" onclick="clearCanvas(this)">Clear</button>
+                </div>
+                <canvas class="paint-canvas"></canvas>
+            `;
+        case 'Minesweeper':
+            return `
+                <div class="minesweeper-container">
+                    <div class="minesweeper-header">
+                        <div class="mine-counter">000</div>
+                        <button class="restart-button">🙂</button>
+                        <div class="timer">000</div>
+                    </div>
+                    <div class="minesweeper-grid"></div>
+                </div>
+            `;
+        case 'Clock':
+            return `
+                <div class="clock-app">
+                    <div class="clock-tabs">
+                        <button class="clock-tab active" onclick="switchClockTab(this, 'stopwatch')">Stopwatch</button>
+                        <button class="clock-tab" onclick="switchClockTab(this, 'timer')">Timer</button>
+                        <button class="clock-tab" onclick="switchClockTab(this, 'countdown')">Countdown</button>
+                    </div>
+                    
+                    <div class="clock-content" id="stopwatch" style="display:block;">
+                        <div class="time-display">00:00:00</div>
+                        <div class="controls">
+                            <button onclick="stopwatchControl('start', this)">Start</button>
+                            <button onclick="stopwatchControl('stop', this)">Stop</button>
+                            <button onclick="stopwatchControl('reset', this)">Reset</button>
+                            <button onclick="stopwatchControl('lap', this)">Lap</button>
+                        </div>
+                        <div class="lap-times"></div>
+                    </div>
+
+                    <div class="clock-content" id="timer" style="display:none;">
+                        <div class="time-display">00:00:00</div>
+                        <div class="controls">
+                            <input type="number" min="0" max="23" placeholder="HH" class="time-input">
+                            <input type="number" min="0" max="59" placeholder="MM" class="time-input">
+                            <input type="number" min="0" max="59" placeholder="SS" class="time-input">
+                            <button onclick="timerControl('start', this)">Start</button>
+                            <button onclick="timerControl('stop', this)">Stop</button>
+                            <button onclick="timerControl('reset', this)">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="clock-content" id="countdown" style="display:none;">
+                        <div class="time-display">Set Target Date/Time</div>
+                        <div class="controls">
+                            <input type="datetime-local" class="countdown-input">
+                            <button onclick="countdownControl('start', this)">Start</button>
+                            <button onclick="countdownControl('stop', this)">Stop</button>
+                            <button onclick="countdownControl('reset', this)">Reset</button>
+                        </div>
+                        <div class="countdown-display"></div>
+                    </div>
+                </div>
+            `;
+        default:
+            return `Window content for ${title}`;
+    }
+}
+
+function createTaskbarItem(windowId, title) {
+    const taskbarItem = document.createElement('div');
+    taskbarItem.className = 'taskbar-item';
+    taskbarItem.textContent = title;
+    taskbarItem.setAttribute('data-window-id', windowId);
+    taskbarItem.onclick = function() {
+        const windowId = this.getAttribute('data-window-id');
+        const windowElement = document.getElementById(windowId);
+        if (windowElement) {
+            toggleWindow(windowId);
+        }
+    };
+    document.getElementById('taskbar-items').appendChild(taskbarItem);
+}
+
+function minimizeWindow(windowId) {
+    const window = document.getElementById(windowId);
+    if (window) {
+        window.classList.add('minimized');
+    }
+}
+
+function toggleWindow(windowId) {
+    const window = document.getElementById(windowId);
+    if (window) {
+        if (window.classList.contains('minimized')) {
+            window.classList.remove('minimized');
+            window.style.zIndex = zIndex++;
+        } else {
+            window.classList.add('minimized');
+        }
+    }
+}
+
+function closeWindow(windowId) {
+    const window = document.getElementById(windowId);
+    if (window) {
+        window.remove();
+        windows = windows.filter(w => w.id !== windowId);
+        const taskbarItems = document.getElementById('taskbar-items');
+        const taskbarItem = taskbarItems.querySelector(`[data-window-id="${windowId}"]`);
+        if (taskbarItem) {
+            taskbarItem.remove();
+        }
+    }
+}
+
+function makeDraggable(element) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    element.querySelector('.title-bar').onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+        e.preventDefault();
+        element.style.zIndex = zIndex++;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        element.style.top = (element.offsetTop - pos2) + "px";
+        element.style.left = (element.offsetLeft - pos1) + "px";
+    }
+
+    function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+}
+
+let calculatorState = {
+    currentValue: '0',
+    previousValue: null,
+    operation: null,
+    newNumber: true
+};
+
+function updateCalculatorDisplay(windowId) {
+    const screen = document.querySelector(`#${windowId} #calc-screen`);
+    if (screen) {
+        screen.textContent = calculatorState.currentValue;
+    }
+}
+
+function calculatorInput(digit) {
+    const activeCalc = document.querySelector('.window:not(.minimized) #calc-screen');
+    if (!activeCalc) return;
+    const windowId = activeCalc.closest('.window').id;
+    
+    if (calculatorState.newNumber) {
+        calculatorState.currentValue = digit;
+        calculatorState.newNumber = false;
+    } else {
+        if (digit === '.' && calculatorState.currentValue.includes('.')) return;
+        calculatorState.currentValue = calculatorState.currentValue + digit;
+    }
+    updateCalculatorDisplay(windowId);
+}
+
+function calculatorOperation(op) {
+    const activeCalc = document.querySelector('.window:not(.minimized) #calc-screen');
+    if (!activeCalc) return;
+    const windowId = activeCalc.closest('.window').id;
+    
+    calculatorState.previousValue = parseFloat(calculatorState.currentValue);
+    calculatorState.operation = op;
+    calculatorState.newNumber = true;
+}
+
+function calculatorCalculate() {
+    const activeCalc = document.querySelector('.window:not(.minimized) #calc-screen');
+    if (!activeCalc) return;
+    const windowId = activeCalc.closest('.window').id;
+    
+    if (calculatorState.previousValue === null || calculatorState.operation === null) return;
+    
+    const current = parseFloat(calculatorState.currentValue);
+    let result;
+    
+    switch(calculatorState.operation) {
+        case '+':
+            result = calculatorState.previousValue + current;
+            break;
+        case '-':
+            result = calculatorState.previousValue - current;
+            break;
+        case '*':
+            result = calculatorState.previousValue * current;
+            break;
+        case '/':
+            result = calculatorState.previousValue / current;
+            break;
+    }
+    
+    calculatorState.currentValue = result.toString();
+    calculatorState.previousValue = null;
+    calculatorState.operation = null;
+    calculatorState.newNumber = true;
+    updateCalculatorDisplay(windowId);
+}
+
+function calculatorClear() {
+    const activeCalc = document.querySelector('.window:not(.minimized) #calc-screen');
+    if (!activeCalc) return;
+    const windowId = activeCalc.closest('.window').id;
+    
+    calculatorState.currentValue = '0';
+    calculatorState.previousValue = null;
+    calculatorState.operation = null;
+    calculatorState.newNumber = true;
+    updateCalculatorDisplay(windowId);
+}
+
+function calculatorDelete() {
+    const activeCalc = document.querySelector('.window:not(.minimized) #calc-screen');
+    if (!activeCalc) return;
+    const windowId = activeCalc.closest('.window').id;
+    
+    if (calculatorState.currentValue.length > 1) {
+        calculatorState.currentValue = calculatorState.currentValue.slice(0, -1);
+    } else {
+        calculatorState.currentValue = '0';
+        calculatorState.newNumber = true;
+    }
+    updateCalculatorDisplay(windowId);
+}
+
+function browserNavigate(input) {
+    const iframe = input.closest('.window-content').querySelector('iframe');
+    let url = input.value;
+    
+    // Add https if no protocol specified
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+    }
+    
+    try {
+        iframe.src = url;
+    } catch (e) {
+        console.error('Navigation failed:', e);
+    }
+}
+
+function browserGo(button) {
+    const input = button.previousElementSibling;
+    browserNavigate(input);
+}
+
+function browserBack(button) {
+    const iframe = button.closest('.window-content').querySelector('iframe');
+    try {
+        iframe.contentWindow.history.back();
+    } catch (e) {
+        console.error('Cannot go back:', e);
+    }
+}
+
+function browserForward(button) {
+    const iframe = button.closest('.window-content').querySelector('iframe');
+    try {
+        iframe.contentWindow.history.forward();
+    } catch (e) {
+        console.error('Cannot go forward:', e);
+    }
+}
+
+function browserRefresh(button) {
+    const iframe = button.closest('.window-content').querySelector('iframe');
+    try {
+        iframe.contentWindow.location.reload();
+    } catch (e) {
+        console.error('Cannot refresh:', e);
+    }
+}
+
+function initializeMinesweeper(windowElement) {
+    const grid = windowElement.querySelector('.minesweeper-grid');
+    const mineCounter = windowElement.querySelector('.mine-counter');
+    const timer = windowElement.querySelector('.timer');
+    const restartButton = windowElement.querySelector('.restart-button');
+    
+    const GRID_SIZE = 9;
+    const MINE_COUNT = 10;
+    let cells = [];
+    let mines = [];
+    let gameStarted = false;
+    let gameOver = false;
+    let timerInterval;
+    let timeElapsed = 0;
+    let flagsPlaced = 0;
+    
+    function createGrid() {
+        grid.innerHTML = '';
+        cells = [];
+        mines = [];
+        gameStarted = false;
+        gameOver = false;
+        timeElapsed = 0;
+        flagsPlaced = 0;
+        clearInterval(timerInterval);
+        timer.textContent = '000';
+        mineCounter.textContent = String(MINE_COUNT - flagsPlaced).padStart(3, '0');
+        restartButton.textContent = '🙂';
+        
+        // Create cells
+        for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'mine-cell';
+            cell.dataset.index = i;
+            cell.addEventListener('click', () => revealCell(i));
+            cell.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                toggleFlag(i);
+            });
+            grid.appendChild(cell);
+            cells.push(cell);
+        }
+    }
+    
+    function placeMines(firstClick) {
+        // Place mines randomly, avoiding first click
+        while (mines.length < MINE_COUNT) {
+            const index = Math.floor(Math.random() * (GRID_SIZE * GRID_SIZE));
+            if (!mines.includes(index) && index !== firstClick) {
+                mines.push(index);
+            }
+        }
+    }
+    
+    function getAdjacentMines(index) {
+        const row = Math.floor(index / GRID_SIZE);
+        const col = index % GRID_SIZE;
+        let count = 0;
+        
+        for (let r = -1; r <= 1; r++) {
+            for (let c = -1; c <= 1; c++) {
+                const newRow = row + r;
+                const newCol = col + c;
+                if (newRow >= 0 && newRow < GRID_SIZE && newCol >= 0 && newCol < GRID_SIZE) {
+                    const adjIndex = newRow * GRID_SIZE + newCol;
+                    if (mines.includes(adjIndex)) count++;
+                }
+            }
+        }
+        return count;
+    }
+    
+    function revealCell(index) {
+        if (gameOver || cells[index].classList.contains('flagged')) return;
+        
+        if (!gameStarted) {
+            gameStarted = true;
+            placeMines(index);
+            startTimer();
+        }
+        
+        const cell = cells[index];
+        
+        if (mines.includes(index)) {
+            gameOver = true;
+            cell.textContent = '💣';
+            cell.style.backgroundColor = '#ff0000';
+            revealAllMines();
+            restartButton.textContent = '😵';
+            clearInterval(timerInterval);
+            return;
+        }
+        
+        if (!cell.classList.contains('revealed')) {
+            cell.classList.add('revealed');
+            const adjacentMines = getAdjacentMines(index);
+            
+            if (adjacentMines === 0) {
+                // Reveal adjacent cells
+                const row = Math.floor(index / GRID_SIZE);
+                const col = index % GRID_SIZE;
+                
+                for (let r = -1; r <= 1; r++) {
+                    for (let c = -1; c <= 1; c++) {
+                        const newRow = row + r;
+                        const newCol = col + c;
+                        if (newRow >= 0 && newRow < GRID_SIZE && newCol >= 0 && newCol < GRID_SIZE) {
+                            const adjIndex = newRow * GRID_SIZE + newCol;
+                            if (!cells[adjIndex].classList.contains('revealed')) {
+                                revealCell(adjIndex);
+                            }
+                        }
+                    }
+                }
+            } else {
+                cell.textContent = adjacentMines;
+                cell.style.color = getNumberColor(adjacentMines);
+            }
+        }
+        
+        checkWin();
+    }
+    
+    function toggleFlag(index) {
+        if (gameOver || cells[index].classList.contains('revealed')) return;
+        
+        const cell = cells[index];
+        if (cell.classList.contains('flagged')) {
+            cell.classList.remove('flagged');
+            cell.textContent = '';
+            flagsPlaced--;
+        } else if (flagsPlaced < MINE_COUNT) {
+            cell.classList.add('flagged');
+            cell.textContent = '🚩';
+            flagsPlaced++;
+        }
+        
+        mineCounter.textContent = String(MINE_COUNT - flagsPlaced).padStart(3, '0');
+    }
+    
+    function getNumberColor(number) {
+        const colors = ['#0000ff', '#008000', '#ff0000', '#000080', '#800000', '#008080', '#000000', '#808080'];
+        return colors[number - 1] || '#000000';
+    }
+    
+    function revealAllMines() {
+        mines.forEach(index => {
+            cells[index].textContent = '💣';
+        });
+    }
+    
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            timeElapsed++;
+            timer.textContent = String(timeElapsed).padStart(3, '0');
+        }, 1000);
+    }
+    
+    function checkWin() {
+        const revealedCount = cells.filter(cell => cell.classList.contains('revealed')).length;
+        if (revealedCount === GRID_SIZE * GRID_SIZE - MINE_COUNT) {
+            gameOver = true;
+            restartButton.textContent = '😎';
+            clearInterval(timerInterval);
+            mines.forEach(index => {
+                if (!cells[index].classList.contains('flagged')) {
+                    cells[index].classList.add('flagged');
+                    cells[index].textContent = '🚩';
+                }
+            });
+        }
+    }
+    
+    restartButton.addEventListener('click', createGrid);
+    createGrid();
+}
+
+document.addEventListener('click', (e) => {
+    const startMenu = document.getElementById('startMenu');
+    const startButton = document.querySelector('.start-button');
+    
+    if (!startMenu.contains(e.target) && !startButton.contains(e.target)) {
+        startMenu.style.display = 'none';
+    }
+});
+
+windows.forEach(window => {
+    if (window.element) {
+        window.element.addEventListener('mousedown', () => {
+            window.element.style.zIndex = zIndex++;
+        });
+    }
+});
+
+loadSavedSettings();
+
+window.addEventListener('DOMContentLoaded', () => {
+    const loadingBar = document.getElementById('loadingBar');
+    const loadingScreen = document.getElementById('loadingScreen');
+    const desktop = document.querySelector('.desktop');
+
+    // Start loading animation
+    setTimeout(() => {
+        loadingBar.style.width = '100%';
+    }, 100);
+
+    // Hide loading screen after animation
+    setTimeout(() => {
+        loadingScreen.style.opacity = '0';
+        loadingScreen.style.transition = 'opacity 0.5s';
+        desktop.style.display = 'block';
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+        }, 500);
+    }, 3000);
+});
+
+// Clock Functions
+let stopwatchInterval = null;
+let timerInterval = null;
+let countdownInterval = null;
+let startTime = 0;
+let elapsedTime = 0;
+let laps = [];
+
+function switchClockTab(tab, mode) {
+    // Clear all intervals when switching tabs
+    if (stopwatchInterval) clearInterval(stopwatchInterval);
+    if (timerInterval) clearInterval(timerInterval);
+    if (countdownInterval) clearInterval(countdownInterval);
+    
+    stopwatchInterval = null;
+    timerInterval = null;
+    countdownInterval = null;
+    
+    const tabs = tab.parentElement.getElementsByClassName('clock-tab');
+    const contents = tab.closest('.clock-app').getElementsByClassName('clock-content');
+    
+    Array.from(tabs).forEach(t => t.classList.remove('active'));
+    Array.from(contents).forEach(c => c.style.display = 'none');
+    
+    tab.classList.add('active');
+    document.getElementById(mode).style.display = 'block';
+}
+
+function formatTime(ms) {
+    const pad = (num) => String(num).padStart(2, '0');
+    const hours = pad(Math.floor(ms / 3600000));
+    const minutes = pad(Math.floor((ms % 3600000) / 60000));
+    const seconds = pad(Math.floor((ms % 60000) / 1000));
+    return `${hours}:${minutes}:${seconds}`;
+}
+
+function stopwatchControl(action, button) {
+    if (!button) return;
+    const display = button.closest('.clock-content').querySelector('.time-display');
+    const lapContainer = button.closest('.clock-content').querySelector('.lap-times');
+    const startButton = button.parentElement.querySelector('[onclick*="start"]');
+    
+    switch(action) {
+        case 'start':
+            if (!stopwatchInterval) {
+                startTime = Date.now() - elapsedTime;
+                stopwatchInterval = setInterval(() => {
+                    elapsedTime = Date.now() - startTime;
+                    display.textContent = formatTime(elapsedTime);
+                }, 10);
+                startButton.textContent = 'Pause';
+            } else {
+                clearInterval(stopwatchInterval);
+                stopwatchInterval = null;
+                startButton.textContent = 'Start';
+            }
+            break;
+        case 'stop':
+            clearInterval(stopwatchInterval);
+            stopwatchInterval = null;
+            startButton.textContent = 'Start';
+            break;
+        case 'reset':
+            clearInterval(stopwatchInterval);
+            stopwatchInterval = null;
+            elapsedTime = 0;
+            laps = [];
+            display.textContent = '00:00:00';
+            lapContainer.innerHTML = '';
+            startButton.textContent = 'Start';
+            break;
+        case 'lap':
+            if (stopwatchInterval) {
+                laps.push(elapsedTime);
+                const lapItem = document.createElement('div');
+                lapItem.textContent = `Lap ${laps.length}: ${formatTime(elapsedTime)}`;
+                lapContainer.insertBefore(lapItem, lapContainer.firstChild);
+            }
+            break;
+    }
+}
+
+function timerControl(action, button) {
+    if (!button) return;
+    const display = button.closest('.clock-content').querySelector('.time-display');
+    const inputs = button.closest('.clock-content').querySelectorAll('.time-input');
+    const startButton = button.parentElement.querySelector('[onclick*="start"]');
+    
+    switch(action) {
+        case 'start':
+            if (!timerInterval) {
+                let hours = parseInt(inputs[0].value) || 0;
+                let minutes = parseInt(inputs[1].value) || 0;
+                let seconds = parseInt(inputs[2].value) || 0;
+                let totalMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
+                
+                if (totalMs > 0) {
+                    startTime = Date.now();
+                    elapsedTime = totalMs;
+                    
+                    timerInterval = setInterval(() => {
+                        const remaining = elapsedTime - (Date.now() - startTime);
+                        if (remaining <= 0) {
+                            clearInterval(timerInterval);
+                            timerInterval = null;
+                            display.textContent = '00:00:00';
+                            startButton.textContent = 'Start';
+                            alert('Timer finished!');
+                        } else {
+                            display.textContent = formatTime(remaining);
+                        }
+                    }, 10);
+                    startButton.textContent = 'Pause';
+                }
+            } else {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                startButton.textContent = 'Start';
+            }
+            break;
+        case 'stop':
+            clearInterval(timerInterval);
+            timerInterval = null;
+            startButton.textContent = 'Start';
+            break;
+        case 'reset':
+            clearInterval(timerInterval);
+            timerInterval = null;
+            display.textContent = '00:00:00';
+            inputs.forEach(input => input.value = '');
+            startButton.textContent = 'Start';
+            break;
+    }
+}
+
+function countdownControl(action, button) {
+    if (!button) return;
+    const display = button.closest('.clock-content').querySelector('.countdown-display');
+    const input = button.closest('.clock-content').querySelector('.countdown-input');
+    const startButton = button.parentElement.querySelector('[onclick*="start"]');
+    
+    switch(action) {
+        case 'start':
+            if (!countdownInterval) {
+                const targetDate = new Date(input.value).getTime();
+                if (targetDate) {
+                    countdownInterval = setInterval(() => {
+                        const now = new Date().getTime();
+                        const distance = targetDate - now;
+                        
+                        if (distance < 0) {
+                            clearInterval(countdownInterval);
+                            countdownInterval = null;
+                            display.textContent = 'EXPIRED';
+                            startButton.textContent = 'Start';
+                            alert('Countdown finished!');
+                        } else {
+                            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60));
+                            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                            
+                            display.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                        }
+                    }, 1000);
+                    startButton.textContent = 'Pause';
+                }
+            } else {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+                startButton.textContent = 'Start';
+            }
+            break;
+        case 'stop':
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+            startButton.textContent = 'Start';
+            break;
+        case 'reset':
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+            display.textContent = '';
+            input.value = '';
+            startButton.textContent = 'Start';
+            break;
+    }
+}
+
+function changeUsername(newUsername) {
+    if (newUsername.trim()) {
+        localStorage.setItem('username', newUsername);
+        updateStartMenuHeader();
+    }
+}
+
+function changeProfilePicture(input) {
+    const file = input.files[0];
+    if (file) {
+        // Check file format
+        const validFormats = ['image/png', 'image/jpeg', 'image/webp'];
+        if (!validFormats.includes(file.type)) {
+            showError('Invalid file format! Please use PNG, JPG, JPEG, or WEBP formats only.');
+            input.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            localStorage.setItem('profilePicture', e.target.result);
+            updateStartMenuHeader();
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function updateStartMenuHeader() {
+    const username = localStorage.getItem('username') || 'User';
+    const profilePicture = localStorage.getItem('profilePicture');
+    const startMenuHeader = document.querySelector('.start-menu-header');
+    
+    if (startMenuHeader) {
+        if (profilePicture) {
+            startMenuHeader.innerHTML = `
+                <img class="start-menu-avatar" src="${profilePicture}" alt="Profile Picture">
+                <div class="start-menu-username">${username}</div>
+            `;
+        } else {
+            startMenuHeader.innerHTML = `
+                <svg class="start-menu-avatar" viewBox="0 0 40 40">
+                    <circle cx="20" cy="15" r="8" fill="#236b8e"/>
+                    <circle cx="20" cy="42" r="16" fill="#236b8e"/>
+                </svg>
+                <div class="start-menu-username">${username}</div>
+            `;
+        }
+    }
+}
+
+function toggleStartMenu() {
+    const startMenu = document.getElementById('startMenu');
+    if (startMenu.style.display === 'block') {
+        startMenu.style.display = 'none';
+    } else {
+        startMenu.innerHTML = getStartMenuHTML();
+        startMenu.style.display = 'block';
+    }
+}
+
+function getStartMenuHTML() {
+    const username = localStorage.getItem('username') || 'User';
+    const profilePicture = localStorage.getItem('profilePicture');
+    
+    const avatarHTML = profilePicture ? 
+        `<img class="start-menu-avatar" src="${profilePicture}" alt="Profile Picture">` :
+        `<svg class="start-menu-avatar" viewBox="0 0 40 40">
+            <circle cx="20" cy="15" r="8" fill="#236b8e"/>
+            <circle cx="20" cy="42" r="16" fill="#236b8e"/>
+        </svg>`;
+
+    return `
+        <div class="start-menu-header">
+            ${avatarHTML}
+            <div class="start-menu-username">${username}</div>
+        </div>
+        <div class="start-menu-item" onclick="createWindow('Settings')">Settings</div>
+        <div class="start-menu-item" onclick="shutDown()">Shut Down...</div>
+    `;
+}
+
+// Add shutdown function
+function shutDown() {
+    // Fade to black
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.background = '#000';
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 1s';
+    overlay.style.zIndex = '99999';
+    document.body.appendChild(overlay);
+
+    // Fade in the black overlay
+    setTimeout(() => {
+        overlay.style.opacity = '1';
+    }, 100);
+}
+
+document.addEventListener('click', (e) => {
+    const startMenu = document.getElementById('startMenu');
+    const startButton = document.querySelector('.start-button');
+    
+    if (!startMenu.contains(e.target) && !startButton.contains(e.target)) {
+        startMenu.style.display = 'none';
+    }
+});
+
+windows.forEach(window => {
+    if (window.element) {
+        window.element.addEventListener('mousedown', () => {
+            window.element.style.zIndex = zIndex++;
+        });
+    }
+});
+
+loadSavedSettings();
+
+window.addEventListener('DOMContentLoaded', () => {
+    const loadingBar = document.getElementById('loadingBar');
+    const loadingScreen = document.getElementById('loadingScreen');
+    const desktop = document.querySelector('.desktop');
+
+    // Start loading animation
+    setTimeout(() => {
+        loadingBar.style.width = '100%';
+    }, 100);
+
+    // Hide loading screen after animation
+    setTimeout(() => {
+        loadingScreen.style.opacity = '0';
+        loadingScreen.style.transition = 'opacity 0.5s';
+        desktop.style.display = 'block';
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+        }, 500);
+    }, 3000);
+});
+</script></body></html>
